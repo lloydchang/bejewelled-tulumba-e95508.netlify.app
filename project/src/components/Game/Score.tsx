@@ -6,7 +6,7 @@ interface ScoreProps {
 
 export const Score: React.FC<ScoreProps> = ({ score }) => {
   return (
-    <div className="absolute top-4 left-4 text-white text-xl font-bold">
+    <div className="absolute top-4 left-4 text-green-500 text-xl font-bold">
       Score: {score}
     </div>
   );

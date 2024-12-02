@@ -11,7 +11,7 @@ export const Alien: React.FC<AlienProps> = ({ position }) => {
       className="absolute"
       style={{ left: `${position.x}px`, top: `${position.y}px` }}
     >
-      <Ghost size={24} className="text-purple-500" />
+      <Ghost size={24} className="text-green-500" />
     </div>
   );
 };
