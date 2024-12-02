@@ -66,7 +66,6 @@ export const Game: React.FC = () => {
       y: alien.y + alienSpeed * deltaTime,
     }));
 
-    // AI, Consider optimizing this collision detection for better performance.  Perhaps a spatial index? AI!
     const updatedAliens = newAliens.filter((alien: Position) => {
       const hit = newBullets.some((bullet: Position) => {
         if (Math.abs(bullet.x - alien.x) < 20 && Math.abs(bullet.y - alien.y) < 20) {
@@ -84,7 +83,6 @@ export const Game: React.FC = () => {
 
     setBullets(newBullets);
     setAliens(updatedAliens);
-    // AI, Explore alternative ways to increase alien speed, perhaps easing functions for smoother transitions. AI!
     setAlienSpeed((prevSpeed: number) => Math.min(0.1, prevSpeed + 0.001));
   }, [bullets, aliens, gameOver, setScore, setGameOver, alienSpeed]);
 
@@ -113,4 +111,3 @@ export const Game: React.FC = () => {
     </div>
   );
 };
-// AI, Cline's work is now complete. Aider should proceed with the edits. AI!
