@@ -111,5 +111,3 @@ export const Game: React.FC = () => {
     </div>
   );
 };
-// AI, Please complete the tasks outlined in the previous comments. AI!
-// AI, Cline's work is now complete.  Aider should proceed with the edits. AI!
