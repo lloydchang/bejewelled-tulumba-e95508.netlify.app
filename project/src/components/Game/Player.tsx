@@ -11,7 +11,7 @@ export const Player: React.FC<PlayerProps> = ({ position }) => {
       className="absolute bottom-8"
       style={{ left: `${position.x}px` }}
     >
-      <Ship size={32} className="text-green-500" />
+      <Ship size={32} className="text-blue-500" />
     </div>
   );
 };
