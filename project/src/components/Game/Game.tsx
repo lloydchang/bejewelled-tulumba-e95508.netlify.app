@@ -15,6 +15,19 @@ interface AlienProps {
   position: Position;
 }
 
+const initializeAliens = useCallback(() => {
+  const newAliens: Position[] = [];
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 8; col++) {
+      newAliens.push({
+        x: col * 60 + 100,
+        y: row * 60 + 50,
+      });
+    }
+  }
+  return newAliens;
+}, []);
+
 export const Game: React.FC = () => {
   const [playerPos, setPlayerPos] = useState<Position>({ x: window.innerWidth / 2, y: 0 });
   const [bullets, setBullets] = useState<{ position: Position; velocity: number }[]>([]);
@@ -102,19 +115,6 @@ export const Game: React.FC = () => {
     }
   }, [playerPos, decreasePlayerHealth]);
 
-  const initializeAliens = useCallback(() => {
-    const newAliens: Position[] = [];
-    for (let row = 0; row < 3; row++) {
-      for (let col = 0; col < 8; col++) {
-        newAliens.push({
-          x: col * 60 + 100,
-          y: row * 60 + 50,
-        });
-      }
-    }
-    return newAliens;
-  }, []);
-
   useEffect(() => {
     setAliens(initializeAliens());
   }, [initializeAliens]);
@@ -128,6 +128,10 @@ export const Game: React.FC = () => {
       setPlayerPos((prev: Position) => ({ ...prev, x: Math.min(window.innerWidth - 32, prev.x + 20) }));
     } else if (e.code === 'Space') {
       setBullets((prev: { position: Position; velocity: number }[]) => [...prev, { position: { x: playerPos.x + 16, y: window.innerHeight - 80 }, velocity: 100 }]);
+    }
+    // AI Increase the player's score multiplier when the 'M' key is pressed
+    else if (e.code === 'KeyM') {
+      setScoreMultiplier(prevMultiplier => prevMultiplier + 1);
     }
   }, [playerPos, gameOver]);
 
@@ -169,7 +173,7 @@ export const Game: React.FC = () => {
   const renderGameComponents = () => {
     return (
       <div className="relative w-full h-screen bg-black overflow-hidden">
-        <Score score={score} />
+        <Score score={score} scoreMultiplier={scoreMultiplier} />
         <Player position={playerPos} />
         {bullets.map((bullet: { position: Position; velocity: number }, index: number) => (
           <Bullet key={index} position={bullet.position} velocity={bullet.velocity} />
@@ -181,6 +185,14 @@ export const Game: React.FC = () => {
       </div>
     );
   };
+
+  return renderGameComponents();
+};
+  // AI Update the handleAlienSpeedIncrease function to increase the alien speed based on the score multiplier
+  // AI Update the handleAlienPlayerCollision function to decrease player health based on the score multiplier
+  // AI Update the handleKeyDown function to increase the player's score multiplier when a specific key is pressed
+  // AI Update the renderGameComponents function to display the score multiplier
+  // AI!
 
   return renderGameComponents();
 };
