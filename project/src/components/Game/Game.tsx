@@ -102,7 +102,7 @@ export const Game: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full h-screen bg-blue-900 overflow-hidden">
+    <div className="relative w-full h-screen bg-black overflow-hidden">
       <Score score={score} />
       <Player position={playerPos} />
       {bullets.map((bullet: Position, index: number) => (
