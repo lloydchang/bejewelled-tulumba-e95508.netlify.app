@@ -21,6 +21,11 @@ export const Game: React.FC = () => {
   const [playerHealth, setPlayerHealth] = useState(3);
   const [scoreMultiplier, setScoreMultiplier] = useState(1);
 
+  // AI Add a feature to increase score multiplier when player scores 1000 points AI!
+  // AI Implement a power-up that increases player speed temporarily AI!
+  // AI Add a feature to save high scores to local storage AI!
+  // AI Refactor the game loop to improve performance AI!
+
   const initializeAliens = useCallback(() => {
     const newAliens: Position[] = [];
     for (let row = 0; row < 3; row++) {
@@ -74,7 +79,7 @@ export const Game: React.FC = () => {
     const updatedAliens = newAliens.filter((alien: Position) => {
       const hit = newBullets.some((bullet: { position: Position; velocity: number }) => {
         return (
-          Math.abs(bullet.position.x - alien.x) < 20 && Math.abs(bullet.position.y - alien.y) < 20
+          Math.abs(bullet.position.x - alien.x) < 20 &amp;&amp; Math.abs(bullet.position.y - alien.y) < 20
         );
       });
       if (hit) {
@@ -85,7 +90,7 @@ export const Game: React.FC = () => {
 
     const playerHit = newAliens.some((alien: Position) => {
       return (
-        Math.abs(alien.x - playerPos.x) < 20 && Math.abs(alien.y - playerPos.y) < 20
+        Math.abs(alien.x - playerPos.x) < 20 &amp;&amp; Math.abs(alien.y - playerPos.y) < 20
       );
     });
 
@@ -128,7 +133,7 @@ export const Game: React.FC = () => {
       {aliens.map((alien: Position, index: number) => (
         <Alien key={index} position={alien} />
       ))}
-      {gameOver && <GameOver score={score} onRestart={handleRestart} />}
+      {gameOver &amp;&amp; <GameOver score={score} onRestart={handleRestart} />}
     </div>
   );
 };
