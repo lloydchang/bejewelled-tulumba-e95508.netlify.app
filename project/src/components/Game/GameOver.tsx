@@ -13,7 +13,7 @@ export const GameOver: React.FC<GameOverProps> = ({ score, onRestart }) => {
         <p className="text-xl mb-4">Final Score: {score}</p>
         <button
           onClick={onRestart}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+          className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition"
         >
           Play Again
         </button>

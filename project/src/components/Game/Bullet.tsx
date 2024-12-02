@@ -7,7 +7,7 @@ interface BulletProps {
 export const Bullet: React.FC<BulletProps> = ({ position }) => {
   return (
     <div 
-      className="absolute w-1 h-3 bg-yellow-400 rounded"
+      className="absolute w-1 h-3 bg-blue-400 rounded"
       style={{ left: `${position.x}px`, top: `${position.y}px` }}
     />
   );
