@@ -20,6 +20,9 @@ export const Game: React.FC = () => {
   const [alienSpeed, setAlienSpeed] = useState(0.02);
   const [playerHealth, setPlayerHealth] = useState(3);
 
+  // AI Add a new state variable for tracking the player's score multiplier AI!
+  // AI Initialize the score multiplier to 1 AI!
+
   const initializeAliens = useCallback(() => {
     const newAliens: Position[] = [];
     for (let row = 0; row < 3; row++) {
@@ -31,9 +34,6 @@ export const Game: React.FC = () => {
       }
     }
     return newAliens;
-  }, []);
-
-  useEffect(() => {
     setAliens(initializeAliens());
   }, [initializeAliens]);
 
