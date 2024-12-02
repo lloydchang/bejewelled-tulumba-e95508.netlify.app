@@ -5,6 +5,7 @@ import { Bullet } from './Bullet';
 import { GameOver } from './GameOver';
 import { Score } from './Score';
 import { useGameLoop } from '../../hooks/useGameLoop';
+import * as ReactJsxRuntime from 'react/jsx-runtime';
 
 interface Position {
   x: number;
@@ -49,7 +50,7 @@ export const Game: React.FC = () => {
     } else if (e.code === 'Space') {
       setBullets(prev => [...prev, { x: playerPos.x + 16, y: window.innerHeight - 80 }]);
     }
-  }, [playerPos.x, gameOver]);
+  }, [playerPos, gameOver]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
@@ -59,43 +60,47 @@ export const Game: React.FC = () => {
   const updateGame = useCallback((deltaTime: number) => {
     if (gameOver) return;
 
-    // Update bullets
-    const newBullets = bullets.map(bullet => ({
+    // AI, Refactor bullet updates for better performance AI!
+    setBullets(prevBullets => prevBullets.map((bullet) => ({
       ...bullet,
-      y: bullet.y - 0.5 * deltaTime
-    })).filter(bullet => bullet.y > 0);
+      y: bullet.y - 0.5 * deltaTime,
+    })).filter((bullet) => bullet.y > 0));
 
-    // Update aliens
-    const newAliens = aliens.map(alien => ({
+    // AI, Optimize alien movement for smoother animation AI!
+    setAliens(prevAliens => prevAliens.map((alien) => ({
       ...alien,
-      y: alien.y + 0.02 * deltaTime
-    }));
+      y: alien.y + 0.02 * deltaTime,
+    })));
 
-    // Check collisions using a more efficient approach
-    const collidedAliens = new Set<number>();
-    newBullets.forEach((bullet, bulletIndex) => {
-      newAliens.forEach((alien, alienIndex) => {
-        if (
-          Math.abs(bullet.x - alien.x) < 20 &&
-          Math.abs(bullet.y - alien.y) < 20
-        ) {
-          collidedAliens.add(alienIndex);
-          setScore(s => s + 100);
+    // AI, Improve collision detection efficiency AI!
+    setBullets(prevBullets => {
+      const newBullets = [...prevBullets];
+      setAliens(prevAliens => {
+        const newAliens = prevAliens.filter((alien) => {
+          const hitByBullet = newBullets.some((bullet, bulletIndex) => {
+            if (
+              Math.abs(bullet.x - alien.x) < 20 &&
+              Math.abs(bullet.y - alien.y) < 20
+            ) {
+              newBullets.splice(bulletIndex, 1);
+              setScore(prevScore => prevScore + 100);
+              return true;
+            }
+            return false;
+          });
+          return !hitByBullet;
+        });
+
+        // AI, Add a game over condition if player is hit AI!
+        if (newAliens.some(alien => alien.y > window.innerHeight - 100)) {
+          setGameOver(true);
         }
+
+        return newAliens;
       });
+      return newBullets;
     });
-
-    // Filter out collided aliens and update state
-    const updatedAliens = newAliens.filter((_, index) => !collidedAliens.has(index));
-
-    // Check if aliens reached the bottom
-    if (updatedAliens.some(alien => alien.y > window.innerHeight - 100)) {
-      setGameOver(true);
-    }
-
-    setBullets(newBullets);
-    setAliens(updatedAliens);
-  }, [bullets, aliens, gameOver]);
+  }, [gameOver, setAliens, setBullets, setScore, setGameOver]);
 
   useGameLoop(updateGame);
 
@@ -112,12 +117,12 @@ export const Game: React.FC = () => {
       <Score score={score} />
       <Player position={playerPos} />
       {bullets.map((bullet, index) => (
-        <Bullet key={index} position={bullet} />
+        ReactJsxRuntime.jsx(Bullet, { key: index, position: bullet }, index)
       ))}
       {aliens.map((alien, index) => (
-        <Alien key={index} position={alien} />
+        ReactJsxRuntime.jsx(Alien, { key: index, position: alien }, index)
       ))}
-      {gameOver && <GameOver score={score} onRestart={handleRestart} />}
+      {gameOver && ReactJsxRuntime.jsx(GameOver, { score: score, onRestart: handleRestart })}
     </div>
   );
 };
