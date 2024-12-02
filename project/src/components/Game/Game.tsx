@@ -60,47 +60,38 @@ export const Game: React.FC = () => {
   const updateGame = useCallback((deltaTime: number) => {
     if (gameOver) return;
 
-    // AI, Refactor bullet updates for better performance AI!
-    setBullets(prevBullets => prevBullets.map((bullet) => ({
+    // Update bullets
+    const newBullets = bullets.map((bullet) => ({
       ...bullet,
       y: bullet.y - 0.5 * deltaTime,
-    })).filter((bullet) => bullet.y > 0));
+    })).filter((bullet) => bullet.y > 0);
 
-    // AI, Optimize alien movement for smoother animation AI!
-    setAliens(prevAliens => prevAliens.map((alien) => ({
+    // Update aliens
+    const newAliens = aliens.map((alien) => ({
       ...alien,
       y: alien.y + 0.02 * deltaTime,
-    })));
+    }));
 
-    // AI, Improve collision detection efficiency AI!
-    setBullets(prevBullets => {
-      const newBullets = [...prevBullets];
-      setAliens(prevAliens => {
-        const newAliens = prevAliens.filter((alien) => {
-          const hitByBullet = newBullets.some((bullet, bulletIndex) => {
-            if (
-              Math.abs(bullet.x - alien.x) < 20 &&
-              Math.abs(bullet.y - alien.y) < 20
-            ) {
-              newBullets.splice(bulletIndex, 1);
-              setScore(prevScore => prevScore + 100);
-              return true;
-            }
-            return false;
-          });
-          return !hitByBullet;
-        });
-
-        // AI, Add a game over condition if player is hit AI!
-        if (newAliens.some(alien => alien.y > window.innerHeight - 100)) {
-          setGameOver(true);
+    // Check for collisions efficiently
+    const updatedAliens = newAliens.filter((alien) => {
+      const hit = newBullets.some((bullet, bulletIndex) => {
+        if (Math.abs(bullet.x - alien.x) < 20 && Math.abs(bullet.y - alien.y) < 20) {
+          setScore((prevScore) => prevScore + 100);
+          return true;
         }
-
-        return newAliens;
+        return false;
       });
-      return newBullets;
+      return !hit;
     });
-  }, [gameOver, setAliens, setBullets, setScore, setGameOver]);
+
+    // Check game over condition
+    if (updatedAliens.some((alien) => alien.y > window.innerHeight - 100)) {
+      setGameOver(true);
+    }
+
+    setBullets(newBullets);
+    setAliens(updatedAliens);
+  }, [bullets, aliens, gameOver, setScore, setGameOver]);
 
   useGameLoop(updateGame);
 
