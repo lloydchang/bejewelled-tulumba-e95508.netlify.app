@@ -11,6 +11,10 @@ interface Position {
   y: number;
 }
 
+interface AlienProps {
+  position: Position;
+}
+
 export const Game: React.FC = () => {
   const [playerPos, setPlayerPos] = useState<Position>({ x: window.innerWidth / 2, y: 0 });
   const [bullets, setBullets] = useState<{ position: Position; velocity: number }[]>([]);
@@ -27,14 +31,26 @@ export const Game: React.FC = () => {
     }
   }, [score]);
 
-  const decreasePlayerHealth = useCallback(() => {
-    setPlayerHealth(prevHealth => prevHealth - 1);
-    if (playerHealth <= 0) {
+  const handlePlayerHealthChange = useCallback((newHealth: number) => {
+    setPlayerHealth(newHealth);
+    if (newHealth <= 0) {
       setGameOver(true);
     }
-  }, [playerHealth]);
+  }, []);
 
-  const resetGameState = useCallback(() => {
+  const decreasePlayerHealth = useCallback(() => {
+    handlePlayerHealthChange(playerHealth - 1);
+  }, [playerHealth, handlePlayerHealthChange]);
+
+  const handleAlienSpeedIncrease = useCallback((newSpeed: number) => {
+    setAlienSpeed(Math.min(0.1, newSpeed));
+  }, []);
+
+  const updateAlienSpeed = useCallback((deltaTime: number) => {
+    handleAlienSpeedIncrease(alienSpeed + 0.0005 * deltaTime);
+  }, [alienSpeed, handleAlienSpeedIncrease]);
+
+  const handleGameReset = useCallback(() => {
     setGameOver(false);
     setScore(0);
     setPlayerPos({ x: window.innerWidth / 2, y: 0 });
@@ -44,6 +60,20 @@ export const Game: React.FC = () => {
     setPlayerHealth(3);
     setScoreMultiplier(1);
   }, [initializeAliens]);
+
+  const handleGameOverLogic = useCallback(() => {
+    if (gameOver) {
+      // Handle game over logic
+    }
+  }, [gameOver]);
+
+  const handleGameOver = useCallback(() => {
+    handleGameOverLogic();
+  }, [handleGameOverLogic]);
+
+  const handleGameRestart = useCallback(() => {
+    handleGameReset();
+  }, [handleGameReset]);
 
   const handleBulletAlienCollision = useCallback((newBullets: { position: Position; velocity: number }[], newAliens: Position[]) => {
     const updatedAliens = newAliens.filter((alien: Position) => {
@@ -71,10 +101,6 @@ export const Game: React.FC = () => {
       decreasePlayerHealth();
     }
   }, [playerPos, decreasePlayerHealth]);
-
-  const updateAlienSpeed = useCallback((deltaTime: number) => {
-    setAlienSpeed((prevSpeed: number) => Math.min(0.1, prevSpeed + 0.0005 * deltaTime));
-  }, []);
 
   const initializeAliens = useCallback(() => {
     const newAliens: Position[] = [];
@@ -140,16 +166,6 @@ export const Game: React.FC = () => {
 
   useGameLoop(updateGame);
 
-  const handleGameOver = useCallback(() => {
-    if (gameOver) {
-      // Handle game over logic
-    }
-  }, [gameOver]);
-
-  const handleRestart = useCallback(() => {
-    resetGameState();
-  }, [resetGameState]);
-
   const renderGameComponents = () => {
     return (
       <div className="relative w-full h-screen bg-black overflow-hidden">
@@ -161,29 +177,10 @@ export const Game: React.FC = () => {
         {aliens.map((alien: Position, index: number) => (
           <Alien key={index} position={alien} />
         ))}
-        {gameOver && <GameOver score={score} onRestart={handleRestart} />}
+        {gameOver && <GameOver score={score} onRestart={handleGameRestart} />}
       </div>
     );
   };
-
-  const handleGameLoop = useCallback(() => {
-    useGameLoop(updateGame);
-  }, [updateGame]);
-
-  const handleGameOverScreen = useCallback(() => {
-    if (gameOver) {
-      return <GameOver score={score} onRestart={handleRestart} />;
-    }
-    return null;
-  }, [gameOver, score, handleRestart]);
-
-  const handleScoreDisplay = useCallback(() => {
-    return <Score score={score} />;
-  }, [score]);
-
-  const handlePlayerDisplay = useCallback(() => {
-    return <Player position={playerPos} />;
-  }, [playerPos]);
 
   return renderGameComponents();
 };
