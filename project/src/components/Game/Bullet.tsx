@@ -5,8 +5,7 @@ interface BulletProps {
 }
 
 export const Bullet: React.FC<BulletProps> = ({ position }) => {
-  // AI Add a comment to explain the purpose of the Bullet component AI!
-  // AI Ensure the bullet is positioned correctly based on the position prop AI!
+  // This component renders a single bullet on the game screen.
   return (
     <div 
       className="absolute w-1 h-3 bg-yellow-400 rounded"
