@@ -13,7 +13,7 @@ interface Position {
 
 export const Game: React.FC = () => {
   const [playerPos, setPlayerPos] = useState({ x: window.innerWidth / 2, y: 0 } as Position);
-  const [bullets, setBullets] = useState<Position[]>([]);
+  const [bullets, setBullets] = useState<{ position: Position; velocity: number }[]>([]);
   const [aliens, setAliens] = useState<Position[]>([]);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
@@ -44,7 +44,7 @@ export const Game: React.FC = () => {
     } else if (e.code === 'ArrowRight') {
       setPlayerPos((prev: Position) => ({ ...prev, x: Math.min(window.innerWidth - 32, prev.x + 20) }));
     } else if (e.code === 'Space') {
-      setBullets((prev: Position[]) => [...prev, { x: playerPos.x + 16, y: window.innerHeight - 80 }]);
+      setBullets((prev: { position: Position; velocity: number }[]) => [...prev, { position: { x: playerPos.x + 16, y: window.innerHeight - 80 }, velocity: 100 }]);
     }
   }, [playerPos, gameOver]);
 
@@ -56,10 +56,13 @@ export const Game: React.FC = () => {
   const updateGame = useCallback((deltaTime: number) => {
     if (gameOver) return;
 
-    const newBullets = bullets.map((bullet: Position) => ({
+    const newBullets = bullets.map((bullet: { position: Position; velocity: number }) => ({
       ...bullet,
-      y: bullet.y - 0.5 * deltaTime,
-    })).filter((bullet: Position) => bullet.y > 0);
+      position: {
+        ...bullet.position,
+        y: bullet.position.y - bullet.velocity * deltaTime,
+      },
+    })).filter((bullet: { position: Position; velocity: number }) => bullet.position.y > 0);
 
     const newAliens = aliens.map((alien: Position) => ({
       ...alien,
@@ -68,9 +71,9 @@ export const Game: React.FC = () => {
 
     // Optimized collision detection (example using a simple bounding box check)
     const updatedAliens = newAliens.filter((alien: Position) => {
-      const hit = newBullets.some((bullet: Position) => {
+      const hit = newBullets.some((bullet: { position: Position; velocity: number }) => {
         return (
-          Math.abs(bullet.x - alien.x) < 20 && Math.abs(bullet.y - alien.y) < 20
+          Math.abs(bullet.position.x - alien.x) < 20 && Math.abs(bullet.position.y - alien.y) < 20
         );
       });
       if (hit) {
@@ -78,7 +81,6 @@ export const Game: React.FC = () => {
       }
       return !hit;
     });
-
 
     if (updatedAliens.some((alien: Position) => alien.y > window.innerHeight - 100)) {
       setGameOver(true);
@@ -105,8 +107,8 @@ export const Game: React.FC = () => {
     <div className="relative w-full h-screen bg-black overflow-hidden">
       <Score score={score} />
       <Player position={playerPos} />
-      {bullets.map((bullet: Position, index: number) => (
-        <Bullet key={index} position={bullet} />
+      {bullets.map((bullet: { position: Position; velocity: number }, index: number) => (
+        <Bullet key={index} position={bullet.position} velocity={bullet.velocity} />
       ))}
       {aliens.map((alien: Position, index: number) => (
         <Alien key={index} position={alien} />
