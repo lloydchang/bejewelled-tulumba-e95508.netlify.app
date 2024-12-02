@@ -19,9 +19,7 @@ export const Game: React.FC = () => {
   const [gameOver, setGameOver] = useState(false);
   const [alienSpeed, setAlienSpeed] = useState(0.02);
   const [playerHealth, setPlayerHealth] = useState(3);
-
-  // AI Add a new state variable for tracking the player's score multiplier AI!
-  // AI Initialize the score multiplier to 1 AI!
+  const [scoreMultiplier, setScoreMultiplier] = useState(1); // Added score multiplier state
 
   const initializeAliens = useCallback(() => {
     const newAliens: Position[] = [];
@@ -34,6 +32,9 @@ export const Game: React.FC = () => {
       }
     }
     return newAliens;
+  }, []);
+
+  useEffect(() => {
     setAliens(initializeAliens());
   }, [initializeAliens]);
 
@@ -77,7 +78,7 @@ export const Game: React.FC = () => {
         );
       });
       if (hit) {
-        setScore((prevScore: number) => prevScore + 100);
+        setScore((prevScore: number) => prevScore + 100 * scoreMultiplier); // Apply multiplier
       }
       return !hit;
     });
@@ -102,7 +103,7 @@ export const Game: React.FC = () => {
     setBullets(newBullets);
     setAliens(updatedAliens);
     setAlienSpeed((prevSpeed: number) => Math.min(0.1, prevSpeed + 0.0005 * deltaTime));
-  }, [bullets, aliens, gameOver, setScore, setGameOver, alienSpeed, playerPos, playerHealth]);
+  }, [bullets, aliens, gameOver, setScore, setGameOver, alienSpeed, playerPos, playerHealth, scoreMultiplier]);
 
   useGameLoop(updateGame);
 
@@ -114,6 +115,7 @@ export const Game: React.FC = () => {
     setAliens(initializeAliens());
     setAlienSpeed(0.02);
     setPlayerHealth(3);
+    setScoreMultiplier(1); // Reset multiplier on restart
   };
 
   return (
