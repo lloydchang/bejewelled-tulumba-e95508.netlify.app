@@ -5,9 +5,6 @@ import { Bullet } from './Bullet';
 import { GameOver } from './GameOver';
 import { Score } from './Score';
 import { useGameLoop } from '../../hooks/useGameLoop';
-import shootSound from '../../assets/shoot.mp3';
-import explosionSound from '../../assets/explosion.mp3';
-import backgroundMusic from '../../assets/background-music.mp3';
 
 interface Position {
   x: number;
@@ -20,15 +17,6 @@ export const Game: React.FC = () => {
   const [aliens, setAliens] = useState<Position[]>([]);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
-
-  const shootAudio = new Audio(shootSound);
-  const explosionAudio = new Audio(explosionSound);
-  const backgroundAudio = new Audio(backgroundMusic);
-
-  useEffect(() => {
-    backgroundAudio.loop = true;
-    backgroundAudio.play();
-  }, [backgroundAudio]);
 
   const initializeAliens = useCallback(() => {
     const newAliens: Position[] = [];
@@ -60,9 +48,8 @@ export const Game: React.FC = () => {
       }));
     } else if (e.code === 'Space') {
       setBullets(prev => [...prev, { x: playerPos.x + 16, y: window.innerHeight - 80 }]);
-      shootAudio.play();
     }
-  }, [playerPos.x, gameOver, shootAudio]);
+  }, [playerPos.x, gameOver]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
@@ -96,7 +83,6 @@ export const Game: React.FC = () => {
             ) {
               newBullets.splice(bulletIndex, 1);
               setScore(s => s + 100);
-              explosionAudio.play();
               return true;
             }
             return false;
@@ -113,7 +99,7 @@ export const Game: React.FC = () => {
       });
       return newBullets;
     });
-  }, [gameOver, explosionAudio]);
+  }, [gameOver]);
 
   useGameLoop(updateGame);
 

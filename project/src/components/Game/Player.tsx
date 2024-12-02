@@ -1,4 +1,5 @@
 import React from 'react';
+import { Ship } from 'lucide-react';
 
 interface PlayerProps {
   position: { x: number };
@@ -10,7 +11,7 @@ export const Player: React.FC<PlayerProps> = ({ position }) => {
       className="absolute bottom-8"
       style={{ left: `${position.x}px` }}
     >
-      <img src="/path/to/custom-player-graphic.png" alt="Player" className="w-8 h-8 animate-bounce" />
+      <Ship size={32} className="text-green-500" />
     </div>
   );
 };
