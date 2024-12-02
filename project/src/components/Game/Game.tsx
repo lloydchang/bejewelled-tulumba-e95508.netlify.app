@@ -18,8 +18,6 @@ export const Game: React.FC = () => {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [alienSpeed, setAlienSpeed] = useState(0.02);
-
-  // AI Add a new state variable for player health AI!
   const [playerHealth, setPlayerHealth] = useState(3);
 
   const initializeAliens = useCallback(() => {
@@ -72,11 +70,10 @@ export const Game: React.FC = () => {
       y: alien.y + alienSpeed * deltaTime,
     }));
 
-    // Optimized collision detection (example using a simple bounding box check)
     const updatedAliens = newAliens.filter((alien: Position) => {
       const hit = newBullets.some((bullet: { position: Position; velocity: number }) => {
         return (
-          Math.abs(bullet.position.x - alien.x) < 20 &amp;&amp; Math.abs(bullet.position.y - alien.y) < 20
+          Math.abs(bullet.position.x - alien.x) < 20 && Math.abs(bullet.position.y - alien.y) < 20
         );
       });
       if (hit) {
@@ -85,16 +82,15 @@ export const Game: React.FC = () => {
       return !hit;
     });
 
-    // AI Add collision detection for aliens hitting the player AI!
     const playerHit = newAliens.some((alien: Position) => {
       return (
-        Math.abs(alien.x - playerPos.x) < 20 &amp;&amp; Math.abs(alien.y - playerPos.y) < 20
+        Math.abs(alien.x - playerPos.x) < 20 && Math.abs(alien.y - playerPos.y) < 20
       );
     });
 
     if (playerHit) {
       setPlayerHealth((prevHealth: number) => prevHealth - 1);
-      if (playerHealth === 1) {
+      if (playerHealth <= 0) {
         setGameOver(true);
       }
     }
@@ -105,8 +101,7 @@ export const Game: React.FC = () => {
 
     setBullets(newBullets);
     setAliens(updatedAliens);
-    // Smoother speed increase using easing function
-    setAlienSpeed((prevSpeed: number) => Math.min(0.1, prevSpeed + 0.0005 * deltaTime)); //Example easing
+    setAlienSpeed((prevSpeed: number) => Math.min(0.1, prevSpeed + 0.0005 * deltaTime));
   }, [bullets, aliens, gameOver, setScore, setGameOver, alienSpeed, playerPos, playerHealth]);
 
   useGameLoop(updateGame);
@@ -118,7 +113,6 @@ export const Game: React.FC = () => {
     setBullets([]);
     setAliens(initializeAliens());
     setAlienSpeed(0.02);
-    // AI Reset player health on restart AI!
     setPlayerHealth(3);
   };
 
@@ -132,7 +126,7 @@ export const Game: React.FC = () => {
       {aliens.map((alien: Position, index: number) => (
         <Alien key={index} position={alien} />
       ))}
-      {gameOver &amp;&amp; <GameOver score={score} onRestart={handleRestart} />}
+      {gameOver && <GameOver score={score} onRestart={handleRestart} />}
     </div>
   );
 };
