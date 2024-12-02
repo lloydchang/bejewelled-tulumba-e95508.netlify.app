@@ -21,10 +21,6 @@ export const Game: React.FC = () => {
   const [playerHealth, setPlayerHealth] = useState(3);
   const [scoreMultiplier, setScoreMultiplier] = useState(1);
 
-  // AI Add a feature to increase score multiplier when player scores 1000 points AI!
-  // AI Implement a power-up that increases player speed temporarily AI!
-  // AI Add a feature to save high scores to local storage AI!
-  // AI Refactor the game loop to improve performance AI!
 
   const initializeAliens = useCallback(() => {
     const newAliens: Position[] = [];
